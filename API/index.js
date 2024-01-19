@@ -16,7 +16,7 @@ api.use((req,res,next)=>{
 api.use(cors());
 api.use(bodyParser.urlencoded({ extended: false }));
 api.use(bodyParser.json());
-api.use(session({ secret: process.env.SECRET, cookie: { maxAge: 1440000, httpOnly: true /*,secure: true*/}, resave: false, saveUninitialized: false, name: process.env.COOKIE_NAME }));
+api.use(session({ secret: process.env.SECRET || "secret", cookie: { maxAge: 1440000, httpOnly: true /*,secure: true*/}, resave: false, saveUninitialized: false, name: process.env.COOKIE_NAME || "session" }));
 api.use(passport.initialize());
 api.use(passport.session());
 
@@ -38,9 +38,9 @@ api.post('/logout', auth, async function(req, res) {
         res.status(500).end();
     }
     req.session.destroy();
-    res.clearCookie(process.env.COOKIE_NAME).status(200).end();
+    res.clearCookie(process.env.COOKIE_NAME || "session").status(200).end();
 })
 
-api.listen(process.env.PORT, () => {
-    console.log('Server running on http://localhost:' + process.env.PORT)
+api.listen(process.env.PORT || 3002, () => {
+    console.log('Server running on http://localhost:' + process.env.PORT || 3002)
 })

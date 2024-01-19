@@ -112,6 +112,24 @@ services:
       mongo:
         condition: "service_started"
 
+  api:
+    container_name: api
+    build: ./API
+    environment:
+      PORT: '3002'
+      SECRET: 'SECRET'
+      COOKIE_NAME: 'session'
+      POSTGRES_IP: postgres
+      POSTGRES_PORT: '5432'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PWD: 'changeme'
+      POSTGRES_DB: 'stack'
+    depends_on:
+      - postgres
+    ports:
+      - '3002:3002'
+
+
 networks:
   internal:
     driver: bridge
