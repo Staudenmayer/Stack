@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-btn icon="mdi-logout" @click="logout"></v-btn>
+    {{ $user }}
   </div>
 </template>
 
