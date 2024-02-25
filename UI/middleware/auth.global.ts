@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     let nuxt = useNuxtApp();
     const userStore = useUserStore();
     await userStore.login(nuxt, {email: "", password: ""});
-    if(!userStore.isAuthenticated && !publicPaths.includes(to.path)) {
+    if(!userStore.isAuthenticated(nuxt) && !publicPaths.includes(to.path)) {
         return navigateTo('/login');
     }
     else if (userStore.isAuthenticated(nuxt) && to.path === '/') {

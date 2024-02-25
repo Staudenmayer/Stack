@@ -50,7 +50,7 @@ export default {
   methods: {
     submit: async function () {
       try {
-        await this.userStore.login(this, {email: this.email, password: this.password})
+        await this.userStore.login(this, {email: this.email, password: this.password});
         navigateTo('/home');
       } catch (error) {
         console.error(error);
