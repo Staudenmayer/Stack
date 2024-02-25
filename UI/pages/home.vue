@@ -6,11 +6,13 @@
 </template>
 
 <script lang="ts">
+import { useUserStore } from "~/stores/user";
 export default {
   methods: {
-    logout(){
-      localStorage.removeItem("csrf-token");
-      this.$axios.defaults.headers.common['X-CSRF-Token'] = "";
+    async logout(){
+      //localStorage.removeItem("csrf-token");
+      //this.$axios.defaults.headers.common['X-CSRF-Token'] = "";
+      await useUserStore().logout(this);
       navigateTo("/")
     }
   }

@@ -3,10 +3,10 @@
     <v-card class="ma-5 pa-5 w-25 mx-auto">
       <v-img class="ma-5" contain height="300" src="/favicon.svg"></v-img>
       <v-form @submit.prevent="submit">
-        <v-text-field v-model="email" label="Email" type="email" :rules="[rules.required, rules.emailCheck]"
+        <v-text-field v-model="email" label="Email" type="email" :rules="[rules.emailRequired, rules.emailCheck]"
           clearable></v-text-field>
         <v-text-field v-model="password" label="Password" type="password" :hint="pwdHint"
-          :rules="[rules.required, rules.pwdCheck]" clearable></v-text-field>
+          :rules="[rules.passwordRequired, rules.pwdCheck]" clearable></v-text-field>
         <div class="d-flex">
           <NuxtLink to="#" class="me-auto">Password Forgotten?</NuxtLink>
           <v-btn class="bg-primary" elevated type="submit" size="large">Login</v-btn>
@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import { googleSdkLoaded } from 'vue3-google-login';
+import { useUserStore } from "~/stores/user";
 
 export default {
   data() {
@@ -29,24 +30,28 @@ export default {
       csrf_token: '' as string,
       pwdHint: 'Your password must contain at least one upper case, lower case, number and symbol',
       rules: {
-        required: (value: string) => !!value || 'Field is required',
+        emailRequired: (value: string) => !!value || 'Email is required',
+        passwordRequired: (value: string) => !!value || 'Password is required',
         emailCheck: (value: string) => !!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.exec(value) || 'Your email is not valid',
         pwdCheck: (value: string) => !!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=])[a-zA-Z\d@#$%^&+=]{8,}$/.exec(value) || 'Your password must contain at least one upper case, lower case, number and symbol'
       },
-      googleLoading: false
+      googleLoading: false,
+      userStore: useUserStore()
     }
   },
-  mounted() {
-    this.csrf_token = localStorage?.getItem('csrf-token') || '';
+  async mounted() {
+    try {
+      this.csrf_token = localStorage?.getItem('csrf-token') || '';
+      this.userStore.login(this, {email: this.email, password: this.password})
+    } catch (error) {
+      console.error(error);
+      return;
+    }
   },
   methods: {
     submit: async function () {
       try {
-        let res = await this.$axios.post('/api/login', { email: this.email, password: this.password });
-        let csrf_token = res.headers['x-csrf-token'];
-        localStorage.setItem('csrf-token', csrf_token);
-        this.$axios.defaults.headers.common['X-CSRF-Token'] = csrf_token;
-        this.$user = res.data;
+        await this.userStore.login(this, {email: this.email, password: this.password})
         navigateTo('/home');
       } catch (error) {
         console.error(error);

@@ -4,10 +4,11 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
-const qry = require('../utils/db');
+const db = require('../utils/db');
 const { auth } = require('../utils/auth');
 const schema = require('../utils/schemas');
-const { sendMail } = require('../utils/mail')
+const { sendMail } = require('../utils/mail');
+const { user } = require('pg/lib/defaults');
 
 require('dotenv').config();
 const router = express.Router();
@@ -16,7 +17,7 @@ router.post('/register', async function(req, res, next) {
     try {
         schema.validate('login', req.body);
         let password = await bcrypt.hash(req.body.password, 10);
-        await qry`INSERT INTO users (id, email, password) VALUES (${uuidv4()}, ${req.body.email}, ${password})`;
+        await db.query('INSERT INTO users (email, password) VALUES ($1, $2)', [req.body.email, password])
         //sendMail('s.staudenmayer@outlook.com', 'Test', 'text');
         next();
     } catch (error) {
@@ -55,7 +56,6 @@ router.post('/google', async function(req, res, next) {
             }
         );
         const accessToken = response.data.access_token;
-
         // Fetch user details using the access token
         const userResponse = await axios.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -65,19 +65,22 @@ router.post('/google', async function(req, res, next) {
                 }
             }
         );
-
         if (userResponse && userResponse.data) {
             // Set the userDetails data property to the userResponse object
             req.body.email = userResponse.data.email;
             req.body.password = userResponse.data.sub;
             let password = await bcrypt.hash(req.body.password, 10);
-            await qry`INSERT INTO users (id, email, password) SELECT ${uuidv4()}, ${req.body.email}, ${password} WHERE NOT EXISTS ( SELECT 1 FROM users WHERE email = ${req.body.email} )`
+            let users = await db.query('SELECT * FROM users where email=$1', [req.body.email]);
+            if(users.rowCount == 0) {
+                await db.query('INSERT INTO users (email, password) VALUES ($1, $2)', [userResponse.data.email, password])
+            }
             return next();
         } else {
             // Handle the case where userResponse or userResponse.data is undefined
             return res.status(401).end();
         }
     } catch (error) {
+        console.error(error)
         res.status(500).end();
     }
 },
@@ -94,7 +97,7 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 
 router.post('/logout', auth, async function(req, res) {
     try {
-        await qry`UPDATE users SET csrf=NULL where id=${req.user.id}`;
+        await db.query('UPDATE users SET csrf=NULL where id=$1', [req.user.id])
     } catch (error) {
         //If you get here for some reason there is a major issue
         res.status(500).end();

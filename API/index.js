@@ -8,13 +8,25 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const {auth} = require('./utils/auth');
 const passport = require("passport");
+const pgSession = require('connect-pg-simple')(session);
+const db = require('./utils/db');
 require('./utils/passport');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({ secret: process.env.SECRET || "secret", cookie: { maxAge: 1440000, httpOnly: true /*,secure: true*/}, resave: false, saveUninitialized: false, name: process.env.COOKIE_NAME || "session" }));
+app.use(session({ 
+    secret: process.env.SECRET || "secret",
+    cookie: {
+        maxAge: 1440000,
+        httpOnly: true /*,secure: true*/
+    },
+    resave: false,
+    saveUninitialized: false,
+    name: process.env.COOKIE_NAME || "session",
+    store: new pgSession({pool: db, tableName: 'session_store'})
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
