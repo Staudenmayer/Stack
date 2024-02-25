@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if(!userStore.isAuthenticated(nuxt) && !publicPaths.includes(to.path)) {
         return navigateTo('/login');
     }
-    else if (userStore.isAuthenticated(nuxt) && to.path === '/') {
+    else if (userStore.isAuthenticated(nuxt) && to.path === '/login') {
         return navigateTo('/home');
     }
 });
