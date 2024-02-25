@@ -63,9 +63,9 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest:{
-      name: "Portfolio",
-      short_name: "Portfolio",
-      start_url: '/',
+      name: "Stack",
+      short_name: "Stack",
+      start_url: '/login',
       // gona look like an app
       display: "standalone",
       //  background of the splashscreen when we load the app

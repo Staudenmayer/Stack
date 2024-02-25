@@ -5,6 +5,7 @@ export const useUserStore = defineStore("user", () => {
     const email = ref("");
 
     const login = async ( nuxt: any, credentials: { email: string; password: string } ) => {
+        if(!localStorage) return
         if(isAuthenticated(nuxt)) return;
         try {
             nuxt.$axios.defaults.headers.common['X-CSRF-Token'] = localStorage.getItem('csrf-token');
