@@ -8,6 +8,10 @@ export default defineNuxtConfig({
       enabled: true,
     },
   },
+  routeRules: {
+    '/': {ssr: false},
+    '/home': {ssr: false},
+  },
   app:{
     head: {
       title: 'Dashboard',

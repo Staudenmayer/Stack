@@ -12,7 +12,6 @@ export const useUserStore = defineStore("user", () => {
             email.value = res.data.email;
             try { nuxt.provide('user', res.data); } catch (error) {}
             try { nuxt.$user = res.data; } catch (error) {}
-            
             return;
         } catch (error) {
             console.error(error);
@@ -38,7 +37,7 @@ export const useUserStore = defineStore("user", () => {
         navigateTo("/");
     };
 
-    const isAuthenticated = computed(() => !!id.value);
+    const isAuthenticated = computed(() => email.value && id.value);
 
     return {
         id,

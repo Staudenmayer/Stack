@@ -42,7 +42,6 @@ export default {
   async mounted() {
     try {
       this.csrf_token = localStorage?.getItem('csrf-token') || '';
-      this.userStore.login(this, {email: this.email, password: this.password})
     } catch (error) {
       console.error(error);
       return;
