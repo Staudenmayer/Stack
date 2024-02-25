@@ -35,7 +35,9 @@ export default defineNuxtConfig({
       })
     },
     '@vite-pwa/nuxt',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@vueuse/nuxt',
+    '@nuxtjs/i18n'
   ],
   vite: {
     vue: {
@@ -60,6 +62,9 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/css/main.css'],
+  i18n: {
+    vueI18n: '~/i18n.config.ts' // if you are using custom path, default
+  },
   pwa: {
     registerType: 'autoUpdate',
     manifest:{
