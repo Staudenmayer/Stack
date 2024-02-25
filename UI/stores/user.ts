@@ -5,6 +5,7 @@ export const useUserStore = defineStore("user", () => {
     const email = ref("");
 
     const login = async ( nuxt: any, credentials: { email: string; password: string } ) => {
+        if(isAuthenticated(nuxt)) return;
         try {
             nuxt.$axios.defaults.headers.common['X-CSRF-Token'] = localStorage.getItem('csrf-token');
             let res = await nuxt.$axios.get('/api/user');
@@ -29,7 +30,12 @@ export const useUserStore = defineStore("user", () => {
         }
     };
 
-    const logout = (nuxt: any) => {
+    const logout = async (nuxt: any) => {
+        try {
+            await nuxt.$axios.post('/api/logout');
+        } catch (error) {
+            console.error(error);
+        }
         localStorage.removeItem("csrf-token");
         id.value = "";
         email.value = "";
@@ -37,7 +43,10 @@ export const useUserStore = defineStore("user", () => {
         navigateTo("/");
     };
 
-    const isAuthenticated = computed(() => email.value && id.value);
+    //const isAuthenticated = computed(() => email.value && id.value);
+    const isAuthenticated = (nuxt: any) => {
+        return nuxt && nuxt.$user && nuxt.$user.id && nuxt.$user.email && email.value && id.value && nuxt.$user.email === email.value && nuxt.$user.id === id.value;
+    }
 
     return {
         id,

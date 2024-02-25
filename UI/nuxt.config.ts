@@ -10,7 +10,6 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/': {ssr: false},
-    '/home': {ssr: false},
   },
   app:{
     head: {
