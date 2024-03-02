@@ -2,17 +2,20 @@
   <v-responsive class="align-center text-center fill-height">
     <v-card class="ma-5 pa-5 w-25 mx-auto">
       <v-img class="ma-5" contain height="300" src="/favicon.svg"></v-img>
-      <v-form @submit.prevent="submit">
+      <v-divider class="mt-5 mb-5"></v-divider>
+      <v-btn v-if="!manualLogin" class="bg-primary mb-5" elevated size="large" prepend-icon="mdi-google" @click="login" :loading="googleLoading" block>Login</v-btn>
+      <v-btn v-if="!manualLogin" class="bg-primary" elevated size="large" prepend-icon="mdi-account" @click="manualLogin = !manualLogin" :loading="googleLoading" block>Login</v-btn>
+      <v-form v-if="manualLogin" @submit.prevent="submit">
         <v-text-field v-model="email" label="Email" type="email" :rules="[rules.emailRequired, rules.emailCheck]"
           clearable></v-text-field>
         <v-text-field v-model="password" label="Password" type="password" :hint="pwdHint"
           :rules="[rules.passwordRequired, rules.pwdCheck]" clearable></v-text-field>
         <div class="d-flex">
           <NuxtLink to="#" class="me-auto">Password Forgotten?</NuxtLink>
+          <v-btn class="bg-primary mr-5" elevated @click="manualLogin = !manualLogin" size="large">Cancel</v-btn>
           <v-btn class="bg-primary" elevated type="submit" size="large">Login</v-btn>
         </div>
       </v-form>
-      <v-btn class="bg-primary" elevated size="large" prepend-icon="mdi-google" @click="login" :loading="googleLoading">Login</v-btn>
     </v-card>
     <NuxtLink to="/register">Register</NuxtLink>
   </v-responsive>
@@ -35,6 +38,7 @@ export default {
         emailCheck: (value: string) => !!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.exec(value) || 'Your email is not valid',
         pwdCheck: (value: string) => !!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=])[a-zA-Z\d@#$%^&+=]{8,}$/.exec(value) || 'Your password must contain at least one upper case, lower case, number and symbol'
       },
+      manualLogin: false,
       googleLoading: false,
       userStore: useUserStore()
     }
@@ -93,4 +97,3 @@ export default {
   }
 }
 </script>
-<style></style>
