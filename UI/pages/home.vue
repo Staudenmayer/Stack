@@ -1,23 +1,17 @@
 <template>
-  <div>
-    <v-btn icon="mdi-logout" @click="logout"></v-btn>
-    {{ $user }}
-  </div>
+  
+    <div>
+      <div>{{ $user }}</div>
+    </div>
 </template>
 
 <script lang="ts">
-import { useUserStore } from "~/stores/user";
 export default {
-  methods: {
-    async logout(){
-      const userStore = useUserStore();
-      await userStore.logout(this);
-      navigateTo("/")
-    }
-  }
+  data() {
+    return {}
+  },
+  methods: {}
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
