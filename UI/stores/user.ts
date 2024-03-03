@@ -1,63 +1,47 @@
 import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore('user', () => {
-    const id = ref('');
-    const email = ref('');
+    const user = ref({id: '', email: ''});
 
-    const login = async ( nuxt: any, credentials: { email: string; password: string } ) => {
-        if(!process.client || !localStorage) return
-        if(isAuthenticated(nuxt)) return;
-        try {
-            nuxt.$axios.defaults.headers.common['X-CSRF-Token'] = localStorage.getItem('csrf-token');
-            let res = await nuxt.$axios.get('/api/user');
-            id.value = res.data.id;
-            email.value = res.data.email;
-            try { nuxt.provide('user', res.data); } catch (error) {}
-            try { nuxt.$user = res.data; } catch (error) {}
-            return;
-        } catch (error) {
-            id.value = '';
-            email.value = '';
-            console.error(error);
-        }
-        try {
-            let res = await nuxt.$axios.post('/api/login', {email: credentials.email, password: credentials.password});
-            nuxt.$axios.defaults.headers.common['X-CSRF-Token'] = res.data.csrf;
-            localStorage.setItem('csrf-token', res.data.csrf);
-            id.value = res.data.id;
-            email.value = res.data.email;
-            try { nuxt.provide('user', res.data); } catch (error) {}
-            try { nuxt.$user = res.data; } catch (error) {}
-        } catch (error) {
-            id.value = '';
-            email.value = '';
-            console.error(error);
-        }
-    };
+    function isAuthenticated() {
+        return user && user.value && user.value.id && user.value.email;
+    }
 
-    const logout = async (nuxt: any) => {
+    async function logout() {
         try {
-            await nuxt.$axios.post('/api/logout');
-        } catch (error) {
-            console.error(error);
+            await $fetch("/api/logout", {
+                method: "POST"
+            });
+            user.value = {id: '', email: ''};
+            await navigateTo("/login");
+        } catch (err) {
+            if(err instanceof Error){
+                console.error(err.message)
+            }
         }
-        if(process.client && localStorage) localStorage.removeItem('csrf-token');
-        id.value = '';
-        email.value = '';
-        nuxt.$axios.defaults.headers.common['X-CSRF-Token'] = '';
-        navigateTo('/');
-    };
+    }
 
-    //const isAuthenticated = computed(() => email.value && id.value);
-    const isAuthenticated = (nuxt: any) => {
-        return nuxt && nuxt.$user && nuxt.$user.id && nuxt.$user.email && email.value && id.value && nuxt.$user.email === email.value && nuxt.$user.id === id.value;
+    async function login(email: string, password: string) {
+        try {
+            await $fetch("/api/login", {
+                method: "POST",
+                body: {
+                    username: email,
+                    password: password
+                }
+            });
+            await navigateTo("/");
+        } catch (err) {
+            if(err instanceof Error){
+                console.error(err.message)
+            }
+        }
     }
 
     return {
-        id,
-        email,
-        login,
-        logout,
+        user,
         isAuthenticated,
+        logout,
+        login
     };
 });

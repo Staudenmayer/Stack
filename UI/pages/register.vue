@@ -4,6 +4,8 @@
       <div class="text-h1 mb-5">Register</div>
       <v-form @submit.prevent="register">
         <v-text-field v-model="email" label="Email" type="email" :rules="[rules.emailRequired, rules.emailCheck]"></v-text-field>
+        <v-text-field v-model="password" label="Password" type="password" :rules="[rules.passwordRequired, rules.pwdCheck]"></v-text-field>
+        <v-btn class="bg-primary" elevated type="submit" size="large">Register</v-btn>
       </v-form>
     </v-card>
   </v-responsive>
@@ -25,8 +27,21 @@ export default {
     }
   },
   methods: {
-    register() {
-
+    async register() {
+      try {
+	    	await $fetch("/api/register", {
+	    		method: "POST",
+	    		body: {
+			    	username: this.email,
+			    	password: this.password
+			    }
+	    	});
+	    	await navigateTo("/");
+	    } catch (err) {
+	    	if(err instanceof Error){
+		    	console.error(err.message)
+		    }
+	    }
     }
   }
 }

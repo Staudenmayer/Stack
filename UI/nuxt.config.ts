@@ -45,15 +45,15 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
-    server: {
-      proxy: {
-        '/api': {
-          target: 'http://localhost:4343',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        }
-      }
-    }
+    //server: {
+    //  proxy: {
+    //    '/api': {
+    //      target: 'http://localhost:4343',
+    //      changeOrigin: true,
+    //      rewrite: (path) => path.replace(/^\/api/, ''),
+    //    }
+    //  }
+    //}
   },
   postcss: {
     plugins: {
@@ -100,10 +100,6 @@ export default defineNuxtConfig({
     },
     workbox: {
       globPatterns: ['_nuxt/builds/**/*.json']
-    },
-    devOptions: {
-      enabled: true,
-      type: "module"
     }
   }
 })

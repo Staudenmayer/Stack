@@ -44,24 +44,10 @@ export default {
     }
   },
   async mounted() {
-    try {
-      this.csrf_token = localStorage?.getItem('csrf-token') || '';
-    } catch (error) {
-      console.error(error);
-      return;
-    }
   },
   methods: {
-    submit: async function () {
-      try {
-        await this.userStore.login(this, {email: this.email, password: this.password});
-        navigateTo('/home');
-      } catch (error) {
-        console.error(error);
-        return;
-      }
-      this.email = '';
-      this.password = '';
+    submit: async function (e: Event) {
+      await this.userStore.login(this.email, this.password);
     },
     login: function () {
       const vueObj = this;
@@ -76,11 +62,7 @@ export default {
             callback: async response => {
               if (response.code) {
                 try {
-                  let user = await this.$axios.post('/api/google', {token: response.code});
-                  vueObj.$user = user.data;
-                  let csrf_token = user.headers['x-csrf-token'];
-                  localStorage.setItem('csrf-token', csrf_token);
-                  this.$axios.defaults.headers.common['X-CSRF-Token'] = csrf_token;
+
                   vueObj.googleLoading = false;
                   navigateTo('/home');
                 } catch (error) {

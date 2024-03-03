@@ -1,16 +1,25 @@
-import { useUserStore } from "~/stores/user";
+import { useUserStore } from "#imports";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    let publicPaths = ["/login", "/register"];
-    if(to.path === '/') return navigateTo('/login'); //default redirect to login page
-    let nuxt = useNuxtApp();
-    const userStore = useUserStore();
-    await userStore.login(nuxt, {email: "", password: ""});
-    if(!userStore.isAuthenticated(nuxt) && !publicPaths.includes(to.path)) {
-        return navigateTo('/login');
-    }
-    else if (userStore.isAuthenticated(nuxt) && to.path === '/login') {
-        return navigateTo('/home');
-    }
+	const userStore = useUserStore();
+
+	const publicPaths = ['/login', '/register'];
+	if (publicPaths.includes(to.path)) return;
+
+	const data = await useRequestFetch()("/api/user");
+	if (data) {
+		let user = {id: '', email: ''};
+		user.id = data.id;
+		user.email = data.username;
+		userStore.user = user;
+	}
+	else if (to.path === '/' && !userStore.isAuthenticated()){
+		return navigateTo("/login");
+	}
+	else if (to.path !== from.path){
+		if(!userStore.isAuthenticated()){
+			return navigateTo("/login");
+		}
+	}
 });
-//https://nuxt.com/docs/guide/directory-structure/middleware
+

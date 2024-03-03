@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar v-if="userStore.id" :elevation="2" rounded>
+  <v-app-bar v-if="userStore.isAuthenticated()" :elevation="2" rounded>
     <template v-slot:prepend>
       <v-app-bar-nav-icon @click="showDrawer = !showDrawer"></v-app-bar-nav-icon>
     </template>
@@ -59,8 +59,7 @@ export default {
   },
   methods: {
     async logout() {
-      await this.userStore.logout(this);
-      navigateTo("/")
+      await this.userStore.logout();
     }
   }
 }
