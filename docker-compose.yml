@@ -86,8 +86,6 @@ services:
       GRAYLOG_HTTP_EXTERNAL_URI: "http://localhost:9000/"
       GRAYLOG_ELASTICSEARCH_HOSTS: "http://opensearch:9200"
       GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
-      GRAYLOG_TIMEZONE: "Europe/Berlin"
-      TZ: "Europe/Berlin"
       #GRAYLOG_TRANSPORT_EMAIL_PROTOCOL: "smtp"
       #GRAYLOG_TRANSPORT_EMAIL_WEB_INTERFACE_URL: "http://192.168.3.233:9000/"
       #GRAYLOG_TRANSPORT_EMAIL_HOSTNAME: "${SMTP_ADDRESS}"
@@ -112,24 +110,6 @@ services:
         condition: "service_started"
       mongo:
         condition: "service_started"
-
-  api:
-    container_name: api
-    build: ./API
-    environment:
-      PORT: '3002'
-      SECRET: 'SECRET'
-      COOKIE_NAME: 'session'
-      POSTGRES_IP: postgres
-      POSTGRES_PORT: '5432'
-      POSTGRES_USER: 'admin'
-      POSTGRES_PWD: 'changeme'
-      POSTGRES_DB: 'stack'
-    depends_on:
-      - postgres
-    ports:
-      - '3002:3002'
-
 
 networks:
   internal:

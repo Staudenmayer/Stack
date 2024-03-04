@@ -1,8 +1,9 @@
 import { Argon2id } from "oslo/password";
+import { QueryResult } from "pg";
 import { pool } from "../utils/db";
 import type { DatabaseUser } from "../utils/db";
 import { lucia } from "../utils/auth";
-import { QueryResult } from "pg";
+import log from "../utils/log";
 
 export default eventHandler(async (event) => {
 	const body: Omit<DatabaseUser, "id"> = JSON.parse(await readRawBody(event) as string);
@@ -13,6 +14,7 @@ export default eventHandler(async (event) => {
 		username.length > 31 ||
 		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(username)
 	) {
+		log.notice(__filename + " Invalid username " + username);
 		throw createError({
 			message: "Invalid username",
 			statusCode: 400
@@ -20,6 +22,7 @@ export default eventHandler(async (event) => {
 	}
 	const password = body.password;
 	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
+		log.notice(__filename + " Invalid password");
 		throw createError({
 			message: "Invalid password",
 			statusCode: 400
@@ -29,6 +32,7 @@ export default eventHandler(async (event) => {
 	const user = await pool.query("SELECT * FROM users WHERE username = $1", [username]) as QueryResult<any>;
   	const existingUser = user.rows[0] as DatabaseUser;
 	if (!existingUser) {
+		log.notice(__filename + " Incorrect username or password " + username);
 		throw createError({
 			message: "Incorrect username or password",
 			statusCode: 400
@@ -37,6 +41,7 @@ export default eventHandler(async (event) => {
 
 	const validPassword = await new Argon2id().verify(existingUser.password, password);
 	if (!validPassword) {
+		log.notice(__filename + " Incorrect username or password " + username);
 		throw createError({
 			message: "Incorrect username or password",
 			statusCode: 400

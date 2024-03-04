@@ -1,4 +1,5 @@
 import pg from "pg";
+import log from "./log";
 
 function setupDatabase() {
     const pool = new pg.Pool({
@@ -14,6 +15,7 @@ function setupDatabase() {
             await pool.query(`CREATE TABLE IF NOT EXISTS "users" (id TEXT NOT NULL PRIMARY KEY, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL);`);
             await pool.query(`CREATE TABLE IF NOT EXISTS "session" ( id TEXT NOT NULL PRIMARY KEY, expires_at TIMESTAMPTZ NOT NULL, user_id TEXT NOT NULL REFERENCES "users"(id) );`);
         } catch (error) {
+            log.critical(__filename + " " + error);
             console.error(error);
         }
     }

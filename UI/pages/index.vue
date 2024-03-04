@@ -1,9 +1,6 @@
 <template>
 	<h1>Hi, {{ user.email }}!</h1>
 	<p>Your user ID is {{ user.id }}.</p>
-	<form @submit.prevent="logout">
-		<button>Sign out</button>
-	</form>
 </template>
 
 <script lang="ts">
@@ -20,9 +17,6 @@ export default {
 		this.user = this.userStore.user;
 	},
 	methods: {
-		logout() {
-			this.userStore.logout();
-		}
 	}
 }
 </script>
