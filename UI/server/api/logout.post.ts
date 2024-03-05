@@ -3,7 +3,7 @@ import log from "../utils/log";
 
 export default eventHandler(async (event) => {
 	if (!event.context.session) {
-		log.notice(__filename + " User not logged in");
+		log.notice("User not logged in");
 		throw createError({
 			statusCode: 403
 		});

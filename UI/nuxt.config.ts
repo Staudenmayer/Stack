@@ -9,13 +9,16 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    '/': {ssr: false},
+    //'/': {ssr: false},
   },
   app:{
     head: {
       title: 'Dashboard',
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1.0',
+      meta: [
+        {name: 'theme-color', content: '#329ef4'}
+      ],
       link: [
         {
           rel: 'icon',
@@ -74,10 +77,10 @@ export default defineNuxtConfig({
       // gona look like an app
       display: "standalone",
       //  background of the splashscreen when we load the app
-      background_color: "#FFE9D2",
+      background_color: "#121212",
       // colorize the bar at the top of the app
-      theme_color: "#FFE1C4",
-      
+      theme_color: "#329ef4",
+      prefer_related_applications: false,
       // icon of the app, depending the device its going to use a different size of icon
       icons:[
         {
@@ -99,7 +102,14 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      globPatterns: ['_nuxt/builds/**/*.json']
+      navigateFallback: '/login',
+      globPatterns: ['_nuxt/builds/**/*.json'],
+      runtimeCaching: [
+        {
+          urlPattern: '/',
+          handler: 'NetworkFirst',
+        }
+      ]
     }
   }
 })

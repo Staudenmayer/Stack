@@ -13,7 +13,7 @@ export default eventHandler(async (event) => {
 		username.length > 31 ||
 		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(username)
 	) {
-		log.notice(__filename + " Invalid username " + username);
+		log.notice("Invalid username " + username);
 		throw createError({
 			message: "Invalid username",
 			statusCode: 400
@@ -21,7 +21,7 @@ export default eventHandler(async (event) => {
 	}
 	const password = body.password;
 	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
-		log.notice(__filename + " Invalid password");
+		log.notice("Invalid password");
 		throw createError({
 			message: "Invalid password",
 			statusCode: 400
@@ -37,13 +37,13 @@ export default eventHandler(async (event) => {
 		appendHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	} catch (e) {
     	if(e instanceof Error && e.message === 'duplicate key value violates unique constraint "users_username_key"'){
-		  log.notice(__filename + " Username already used");
+		  log.notice("Username already used");
 		  throw createError({
 			message: "Username already used",
 			statusCode: 500
 		  });
 		}
-		log.error(__filename + " An unknown error occurred" + e);
+		log.error("An unknown error occurred" + e);
 		throw createError({
 			message: "An unknown error occurred",
 			statusCode: 500
