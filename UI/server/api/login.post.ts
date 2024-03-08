@@ -3,7 +3,6 @@ import { QueryResult } from "pg";
 import { pool } from "../utils/db";
 import type { DatabaseUser } from "../utils/db";
 import { lucia } from "../utils/auth";
-import log from "../utils/log";
 
 export default eventHandler(async (event) => {
 	const body: Omit<DatabaseUser, "id"> = JSON.parse(await readRawBody(event) as string);
@@ -14,7 +13,6 @@ export default eventHandler(async (event) => {
 		email.length > 31 ||
 		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(email)
 	) {
-		log.notice("Invalid email " + email);
 		throw createError({
 			message: "Invalid email",
 			statusCode: 400
@@ -22,17 +20,15 @@ export default eventHandler(async (event) => {
 	}
 	const password = body.password;
 	if (typeof password !== "string" || password.length < 6 || password.length > 255) {
-		log.notice("Invalid password");
 		throw createError({
 			message: "Invalid password",
 			statusCode: 400
 		});
 	}
 
-	const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]) as QueryResult<any>;
+	let user = await pool.query("SELECT * FROM users WHERE email = $1", [email]) as QueryResult<any>;
   	const existingUser = user.rows[0] as DatabaseUser;
 	if (!existingUser) {
-		log.notice("Incorrect email or password " + email);
 		throw createError({
 			message: "Incorrect email or password",
 			statusCode: 400
@@ -41,7 +37,6 @@ export default eventHandler(async (event) => {
 
 	const validPassword = await new Argon2id().verify(existingUser.password, password);
 	if (!validPassword) {
-		log.notice("Incorrect email or password " + email);
 		throw createError({
 			message: "Incorrect email or password",
 			statusCode: 400

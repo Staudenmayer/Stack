@@ -1,9 +1,7 @@
 import { lucia } from "../utils/auth";
-import log from "../utils/log";
 
 export default eventHandler(async (event) => {
 	if (!event.context.session) {
-		log.notice("User not logged in");
 		throw createError({
 			statusCode: 403
 		});
