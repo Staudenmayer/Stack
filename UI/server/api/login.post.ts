@@ -7,16 +7,16 @@ import log from "../utils/log";
 
 export default eventHandler(async (event) => {
 	const body: Omit<DatabaseUser, "id"> = JSON.parse(await readRawBody(event) as string);
-	const username = body.username;
+	const email = body.email;
 	if (
-		typeof username !== "string" ||
-		username.length < 3 ||
-		username.length > 31 ||
-		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(username)
+		typeof email !== "string" ||
+		email.length < 3 ||
+		email.length > 31 ||
+		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(email)
 	) {
-		log.notice("Invalid username " + username);
+		log.notice("Invalid email " + email);
 		throw createError({
-			message: "Invalid username",
+			message: "Invalid email",
 			statusCode: 400
 		});
 	}
@@ -29,21 +29,21 @@ export default eventHandler(async (event) => {
 		});
 	}
 
-	const user = await pool.query("SELECT * FROM users WHERE username = $1", [username]) as QueryResult<any>;
+	const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]) as QueryResult<any>;
   	const existingUser = user.rows[0] as DatabaseUser;
 	if (!existingUser) {
-		log.notice("Incorrect username or password " + username);
+		log.notice("Incorrect email or password " + email);
 		throw createError({
-			message: "Incorrect username or password",
+			message: "Incorrect email or password",
 			statusCode: 400
 		});
 	}
 
 	const validPassword = await new Argon2id().verify(existingUser.password, password);
 	if (!validPassword) {
-		log.notice("Incorrect username or password " + username);
+		log.notice("Incorrect email or password " + email);
 		throw createError({
-			message: "Incorrect username or password",
+			message: "Incorrect email or password",
 			statusCode: 400
 		});
 	}

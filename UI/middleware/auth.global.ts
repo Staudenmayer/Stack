@@ -8,10 +8,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
 	const data = await useRequestFetch()("/api/user");
 	if (data) {
-		let user = {id: '', email: ''};
-		user.id = data.id;
-		user.email = data.username;
-		userStore.user = user;
+		userStore.user = data;
 	}
 	else if (to.path === '/' && !userStore.isAuthenticated()){
 		userStore.user = {id: '', email: ''};

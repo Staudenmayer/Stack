@@ -6,16 +6,16 @@ import log from '../utils/log'
 
 export default eventHandler(async (event) => {
 	const body: Omit<DatabaseUser, "id"> = JSON.parse(await readRawBody(event) as string);
-	const username = body.username;
+	const email = body.email;
 	if (
-		typeof username !== "string" ||
-		username.length < 3 ||
-		username.length > 31 ||
-		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(username)
+		typeof email !== "string" ||
+		email.length < 3 ||
+		email.length > 31 ||
+		!/^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b$/.test(email)
 	) {
-		log.notice("Invalid username " + username);
+		log.notice("Invalid email " + email);
 		throw createError({
-			message: "Invalid username",
+			message: "Invalid email",
 			statusCode: 400
 		});
 	}
@@ -32,14 +32,14 @@ export default eventHandler(async (event) => {
 	const userId = generateId(15);
 
 	try {
-		await pool.query("INSERT INTO users (id, username, password) VALUES($1, $2, $3)", [ userId, username, hashedPassword ]);
+		await pool.query("INSERT INTO users (id, email, password) VALUES($1, $2, $3)", [ userId, email, hashedPassword ]);
 		const session = await lucia.createSession(userId, {});
 		appendHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	} catch (e) {
-    	if(e instanceof Error && e.message === 'duplicate key value violates unique constraint "users_username_key"'){
-		  log.notice("Username already used");
+    	if(e instanceof Error && e.message === 'duplicate key value violates unique constraint "users_email_key"'){
+		  log.notice("email already used");
 		  throw createError({
-			message: "Username already used",
+			message: "email already used",
 			statusCode: 500
 		  });
 		}

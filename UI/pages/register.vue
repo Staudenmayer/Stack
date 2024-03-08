@@ -32,7 +32,7 @@ export default {
 	    	await $fetch("/api/register", {
 	    		method: "POST",
 	    		body: {
-			    	username: this.email,
+			    	email: this.email,
 			    	password: this.password
 			    }
 	    	});

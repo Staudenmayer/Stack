@@ -26,7 +26,7 @@ export const useUserStore = defineStore('user', () => {
             await $fetch("/api/login", {
                 method: "POST",
                 body: {
-                    username: email,
+                    email: email,
                     password: password
                 }
             });

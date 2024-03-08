@@ -23,6 +23,17 @@ services:
       - postgres_data:/var/lib/postgres
     networks:
       - internal
+  
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    volumes:
+      - "redis_data:/data"
+    networks:
+      - internal
 
   mongo:
     image: mongo:latest
@@ -63,7 +74,7 @@ services:
       - internal
 
   graylog:
-    image: graylog/graylog:5.2
+    image: graylog/graylog:5.2.5
     container_name: graylog
     restart: unless-stopped
     ports:
@@ -101,7 +112,7 @@ services:
 
     entrypoint: /usr/bin/tini -- wait-for-it opensearch:9200 -- /docker-entrypoint.sh
     volumes:
-      - "./config/graylog/graylog.conf:/usr/share/graylog/config/graylog.conf"
+      #- "./config/graylog:/usr/share/graylog/data/config"
       - "graylog_data:/usr/share/graylog/data"
     networks:
       - internal
@@ -117,6 +128,8 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
+  redis_data:
     driver: local
   mongo_data:
     driver: local
