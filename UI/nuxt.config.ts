@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 
 export default defineNuxtConfig({
   devtools: {
@@ -11,36 +11,34 @@ export default defineNuxtConfig({
   routeRules: {
     //'/': {ssr: false},
   },
-  app:{
+  app: {
     head: {
-      title: 'Dashboard',
-      charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1.0',
-      meta: [
-        {name: 'theme-color', content: '#329ef4'}
-      ],
+      title: "Dashboard",
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1.0",
+      meta: [{ name: "theme-color", content: "#329ef4" }],
       link: [
         {
-          rel: 'icon',
-          href: '/favicon.svg',
-          type: 'image/svg'
-        }
-      ]
-    }
+          rel: "icon",
+          href: "/favicon.svg",
+          type: "image/svg",
+        },
+      ],
+    },
   },
   build: {
-    transpile: ['vuetify'],
+    transpile: ["vuetify"],
   },
   modules: [
-    '@vite-pwa/nuxt',
-    '@pinia/nuxt',
-    '@vueuse/nuxt',
-    '@nuxtjs/i18n',
+    "@vite-pwa/nuxt",
+    "@pinia/nuxt",
+    "@vueuse/nuxt",
+    "@nuxtjs/i18n",
     (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config: any ) => {
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
-    }
+      nuxt.hooks.hook("vite:extendConfig", (config: any) => {
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
+    },
   ],
   vite: {
     vue: {
@@ -64,16 +62,16 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
   i18n: {
-    vueI18n: '~/i18n.config.ts' // if you are using custom path, default
+    vueI18n: "~/i18n.config.ts", // if you are using custom path, default
   },
   pwa: {
-    registerType: 'autoUpdate',
-    manifest:{
+    registerType: "autoUpdate",
+    manifest: {
       name: "Stack",
       short_name: "Stack",
-      start_url: '/login',
+      start_url: "/login",
       // gona look like an app
       display: "standalone",
       //  background of the splashscreen when we load the app
@@ -82,34 +80,34 @@ export default defineNuxtConfig({
       theme_color: "#329ef4",
       prefer_related_applications: false,
       // icon of the app, depending the device its going to use a different size of icon
-      icons:[
+      icons: [
         {
-          src: 'pwa-192x192.png',
-          sizes: '192x192',
-          type: 'image/png'
+          src: "pwa-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
         },
         {
-          src: 'pwa-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
+          src: "pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
         },
         {
-          src: 'pwa-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
-          purpose: 'any maskable',
+          src: "pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any maskable",
         },
       ],
     },
     workbox: {
-      navigateFallback: '/login',
-      globPatterns: ['_nuxt/builds/**/*.json'],
+      navigateFallback: "/login",
+      globPatterns: ["_nuxt/builds/**/*.json"],
       runtimeCaching: [
         {
-          urlPattern: '/',
-          handler: 'NetworkFirst',
-        }
-      ]
-    }
-  }
-})
+          urlPattern: "/",
+          handler: "NetworkFirst",
+        },
+      ],
+    },
+  },
+});

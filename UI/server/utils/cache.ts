@@ -1,9 +1,9 @@
 import log from "./log";
-import { createClient } from 'redis';
+import { createClient } from "redis";
 
 const cache = createClient();
 
-cache.on('error', err => {
+cache.on("error", (err) => {
   log.critical(err);
   console.error(err);
 });

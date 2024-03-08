@@ -8,27 +8,27 @@ import type { DatabaseUser } from "./db";
 // globalThis.crypto = webcrypto as Crypto;
 
 const adapter = new NodePostgresAdapter(pool, {
-	user: "users",
-	session: "session"
+  user: "users",
+  session: "session",
 });
 
 export const lucia = new Lucia(adapter, {
-	sessionExpiresIn: new TimeSpan(4, "w"),
-	sessionCookie: {
-		attributes: {
-			secure: !import.meta.dev
-		}
-	},
-	getUserAttributes: (attributes) => {
-		return {
-			email: attributes.email
-		};
-	}
+  sessionExpiresIn: new TimeSpan(4, "w"),
+  sessionCookie: {
+    attributes: {
+      secure: !import.meta.dev,
+    },
+  },
+  getUserAttributes: (attributes) => {
+    return {
+      email: attributes.email,
+    };
+  },
 });
 
 declare module "lucia" {
-	interface Register {
-		Lucia: typeof lucia;
-		DatabaseUserAttributes: Omit<DatabaseUser, "id">;
-	}
+  interface Register {
+    Lucia: typeof lucia;
+    DatabaseUserAttributes: Omit<DatabaseUser, "id">;
+  }
 }
