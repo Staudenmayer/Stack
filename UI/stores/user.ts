@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", () => {
-  const user = ref({ id: "", email: "" });
+  const user = ref({ id: "", email: "", username: "" });
 
   function isAuthenticated() {
     return user && user.value && user.value.id && user.value.email;
@@ -12,7 +12,7 @@ export const useUserStore = defineStore("user", () => {
       await $fetch("/api/logout", {
         method: "POST",
       });
-      user.value = { id: "", email: "" };
+      user.value = { id: "", email: "", username: "" };
       await navigateTo("/login");
     } catch (err) {
       if (err instanceof Error) {

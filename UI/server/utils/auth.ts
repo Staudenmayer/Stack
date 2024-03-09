@@ -4,9 +4,6 @@ import { pool } from "./db";
 
 import type { DatabaseUser } from "./db";
 
-// import { webcrypto } from "crypto";
-// globalThis.crypto = webcrypto as Crypto;
-
 const adapter = new NodePostgresAdapter(pool, {
   user: "users",
   session: "session",
@@ -22,6 +19,8 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       email: attributes.email,
+      username: attributes.username,
+      googleid: attributes.googleid,
     };
   },
 });

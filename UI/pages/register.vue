@@ -4,6 +4,11 @@
       <div class="text-h1 mb-5">Register</div>
       <v-form @submit.prevent="register">
         <v-text-field
+          v-model="username"
+          label="Username"
+          type="username"
+        ></v-text-field>
+        <v-text-field
           v-model="email"
           label="Email"
           type="email"
@@ -27,6 +32,7 @@
 export default {
   data() {
     return {
+      username: "" as string,
       email: "" as string,
       password: "" as string,
       pwdHint:
@@ -54,6 +60,7 @@ export default {
           body: {
             email: this.email,
             password: this.password,
+            username: this.username,
           },
         });
         await navigateTo("/");

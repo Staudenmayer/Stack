@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>Hi, {{ user.email }}!</h1>
-    <p>Your user ID is {{ user.id }}.</p>
+    <p>{{ user }}</p>
   </div>
 </template>
 

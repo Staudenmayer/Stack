@@ -62,13 +62,14 @@
         </div>
       </v-form>
     </v-card>
+    <a href="/login/google">test</a>
     <NuxtLink to="/register">Register</NuxtLink>
   </v-responsive>
 </template>
 
 <script lang="ts">
-import { googleSdkLoaded } from "vue3-google-login";
 import { useUserStore } from "~/stores/user";
+//import { googleAuthCodeLogin } from "vue3-google-login";
 
 export default {
   data() {
@@ -101,31 +102,10 @@ export default {
     submit: async function () {
       await this.userStore.login(this.email, this.password);
     },
-    login: function () {
-      const vueObj = this;
+    login: async function () {
       this.googleLoading = true;
-      googleSdkLoaded((google) => {
-        google.accounts.oauth2
-          .initCodeClient({
-            client_id:
-              "132131799753-e6ign1ps09pdglddbg0hk5rav89otu35.apps.googleusercontent.com",
-            scope: "email profile openid",
-            redirect_uri: "http://localhost:4444/home",
-            callback: async (response) => {
-              if (response.code) {
-                try {
-                  vueObj.googleLoading = false;
-                  navigateTo("/home");
-                } catch (error) {
-                  vueObj.googleLoading = false;
-                  console.error(error);
-                }
-              }
-            },
-          })
-          .requestCode();
-      });
-      vueObj.googleLoading = false;
+      window.location.href = '/login/google';
+      this.googleLoading = false;
     },
   },
 };

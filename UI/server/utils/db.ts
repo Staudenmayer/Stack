@@ -13,7 +13,7 @@ function setupDatabase() {
     try {
       await pool.connect();
       await pool.query(
-        `CREATE TABLE IF NOT EXISTS "users" (id TEXT NOT NULL PRIMARY KEY, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL);`,
+        `CREATE TABLE IF NOT EXISTS "users" (id TEXT NOT NULL PRIMARY KEY, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, username TEXT NOT NULL UNIQUE, googleid TEXT UNIQUE);`,
       );
       await pool.query(
         `CREATE TABLE IF NOT EXISTS "session" ( id TEXT NOT NULL PRIMARY KEY, expires_at TIMESTAMPTZ NOT NULL, user_id TEXT NOT NULL REFERENCES "users"(id) );`,
@@ -37,4 +37,6 @@ export interface DatabaseUser {
   id: string;
   email: string;
   password: string;
+  username: string;
+  googleid: string;
 }

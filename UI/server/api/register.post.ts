@@ -32,13 +32,25 @@ export default eventHandler(async (event) => {
     });
   }
 
+  const username = body.username;
+  if (
+    typeof username !== "string" ||
+    username.length < 6 ||
+    username.length > 255
+  ) {
+    throw createError({
+      message: "Invalid username",
+      statusCode: 400,
+    });
+  }
+
   const hashedPassword = await new Argon2id().hash(password);
   const userId = generateId(15);
 
   try {
     await pool.query(
-      "INSERT INTO users (id, email, password) VALUES($1, $2, $3)",
-      [userId, email, hashedPassword],
+      "INSERT INTO users (id, email, password, username) VALUES($1, $2, $3, $4)",
+      [userId, email, hashedPassword, username],
     );
     const session = await lucia.createSession(userId, {});
     appendHeader(
