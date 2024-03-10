@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
   const code = query.code?.toString() ?? null;
   const state = query.state?.toString() ?? null;
   const storedState = getCookie(event, "google_oauth_state") ?? null;
-  console.log(query, storedState, code, state)
   if (!code || !state || !storedState || state !== storedState) {
     throw createError({
       status: 400,
